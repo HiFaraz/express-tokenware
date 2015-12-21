@@ -13,7 +13,7 @@ This module enables your Express application to apply token-based authentication
 
 ## Usage
 
-    var tokenware = require('tokenware')(secretOrPrivateKey, options);
+    var tokenware = require('express-tokenware')(secretOrPrivateKey, options);
 
 `secretOrPrivateKey` is a string or buffer containing either the secret or a private key
 
