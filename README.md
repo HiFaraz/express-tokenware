@@ -28,11 +28,11 @@ This module enables your Express application to apply token-based authentication
 For explanation on `algorithm`, `expiresIn`, `audience`, and `issuer` defaults consult [auth0/node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken).
 
 ```javascript
-app.use(token.install);
+app.use(tokenware.install);
 
-app.get('/authenticate', checkCredentials, token.sign, token.send);
+app.get('/authenticate', checkCredentials, tokenware.sign, tokenware.send);
 
-app.get('/api/*', token.verify, function (req, res, next) {
+app.get('/api/*', tokenware.verify, function (req, res, next) {
 	if (req.authorizationToken) {
 		// verified token, can proceed as is, or check if revoked
 		res.send(req.authorizationToken);
