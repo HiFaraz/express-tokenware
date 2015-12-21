@@ -1,0 +1,31 @@
+{
+	"name": "express-tokenware",
+	"version": "0.1.0",
+	"description": "Express middleware that signs and verifies JSON Web Tokens (JWT) and sets req.authorizationToken",
+	"main": "./lib",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/HiFaraz/express-tokenware.git"
+	},
+	"author": {
+		"name": "Faraz Syed",
+		"email": "hello@farazsyed.com",
+		"url": "https://farazsyed.com/"
+	},
+	"license": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+	"homepage": "https://github.com/HiFaraz/express-tokenware",
+	"dependencies": {
+		"jsonwebtoken": "^5.4.1"
+	},
+	"devDependencies": {
+		"express": "^4.13.3"
+	}
+}
