@@ -4,7 +4,7 @@ Flexible and minimalist token-based authentication middleware for [express](http
 
 ```javascript
 var tokenware = require('express-tokenware')('mySecretKey');
-app.use(tokenware.install);
+app.use(tokenware.setHeaders);
 
 app.get('/authenticate',
 	someAuthenticationMiddleware,
@@ -13,13 +13,17 @@ app.get('/authenticate',
 	tokenware.send
 	);
 
-app.get('/myProtectedPath', tokenware.verify, function (req, res, next) {
-	if (req.decodedBearerToken) {
-		// success. Do something with req.decodedBearerToken here
-	} else {
-	    // handle anonymous (invalid token) request
-	}
-}, token.verificationErrorHandler);
+app.get('/myProtectedPath',
+	tokenware.verify,
+	function (req, res, next) {
+		if (req.decodedBearerToken) {
+			// success. Do something with req.decodedBearerToken here
+		} else {
+			// handle anonymous (invalid token) request
+		}
+	},
+	tokenware.verificationErrorHandler
+	);
 ```
 
 ## Installation
@@ -41,7 +45,7 @@ $ npm install express-tokenware
 
 ## Philosophy
 
-Be unopinionated: don't limit which database or architecture options, simply provide basic token functionality that's easy to integrate with the stack
+Be unopinionated: don't limit database or architecture options, simply provide basic token functionality that's easy to integrate with the stack
 
 ## Dependencies
 
@@ -70,17 +74,6 @@ Attach the `tokenware.setHeaders` middleware to allow bearer tokens within a req
 
 ```javascript
 app.use(tokenware.setHeaders);
-```
-
-`tokenware.setHeaders` is a wrapper for:
-
-```javascript
-function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
-    next();
-}
 ```
 
 ### Sign-in/authentication
@@ -117,7 +110,7 @@ app.get('/authenticate',
 
 ### Extracting signed bearer tokens from incoming requests
 
-`express-tokenware` looks for tokens in the `authorization` header in the form of `'Bearer token'`.
+`express-tokenware` looks for tokens in the `authorization` header in the form of `'Bearer token'` (case-sensitive).
 
 ### Verifying signed bearer tokens
 
@@ -133,7 +126,7 @@ app.get('/myProtectedPath',
 	function (req, res, next) {
 		// success. Do something with req.decodedBearerToken here
 	},
-	token.verificationErrorHandler
+	tokenware.verificationErrorHandler
 	);
 ```
 

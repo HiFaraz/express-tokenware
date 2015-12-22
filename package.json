@@ -1,7 +1,7 @@
 {
 	"name": "express-tokenware",
-	"version": "0.1.1",
-	"description": "Express middleware that signs and verifies JSON Web Tokens (JWT) and sets req.authorizationToken",
+	"version": "0.2.0",
+	"description": "Flexible and minimalist token-based authentication middleware for express)",
 	"keywords": [
 		"auth",
 		"authn",
