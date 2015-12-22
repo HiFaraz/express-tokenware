@@ -11,7 +11,7 @@ app.get('/authenticate',
 	somePayloadCreationMiddleware,
 	tokenware.sign,
 	tokenware.send
-	);
+);
 
 app.get('/myProtectedPath',
 	tokenware.verify,
@@ -23,7 +23,9 @@ app.get('/myProtectedPath',
 		}
 	},
 	tokenware.verificationErrorHandler
-	);
+);
+
+app.listen(3000)
 ```
 
 ## Installation
@@ -93,7 +95,7 @@ app.get('/authenticate',
 	somePayloadCreationMiddleware,
 	tokenware.sign,
 	tokenware.send
-	);
+);
 ```
 
 This example adds some complexity by performing an action on the signed bearer token before sending it as a response:
@@ -105,7 +107,7 @@ app.get('/authenticate',
 	tokenware.sign,
 	someTokenStorageMiddleware,
 	tokenware.send
-	);
+);
 ```
 
 ### Extracting signed bearer tokens from incoming requests
@@ -127,7 +129,7 @@ app.get('/myProtectedPath',
 		// success. Do something with req.decodedBearerToken here
 	},
 	tokenware.verificationErrorHandler
-	);
+);
 ```
 
 Invalid tokens are treated as errors and are passed to `token.verificationErrorHandler`.
@@ -143,7 +145,8 @@ app.get('/myProtectedPath',
 		} else {
 		    // handle anonymous (invalid token) request
 		}
-	});
+	}
+);
 ```
 
 In the above example, there is no need to call `token.verificationErrorHandler` because invalid tokens are not treated as errors.
