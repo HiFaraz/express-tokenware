@@ -21,8 +21,7 @@ app.get('/myProtectedPath',
 		} else {
 			// handle anonymous (invalid token) request
 		}
-	},
-	tokenware.verificationErrorHandler
+	}
 );
 
 app.listen(3000)
