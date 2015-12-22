@@ -24,7 +24,7 @@ app.get('/myProtectedPath',
 	}
 );
 
-app.listen(3000)
+app.listen(3000);
 ```
 
 ## Installation
@@ -38,6 +38,7 @@ $ npm install express-tokenware
 * Uses [JSON Web Tokens](https://tools.ietf.org/html/rfc7519) (JWT)
 * Flexible data structure - store whatever you like in the token
 * Provides tokens on sign-in/authentication
+* Extracts bearer tokens from request header
 * Checks tokens on incoming requests
 * Handles anonymous requests
 * Rejects expired tokens
@@ -46,7 +47,7 @@ $ npm install express-tokenware
 
 ## Philosophy
 
-Be unopinionated: don't limit database or architecture options, simply provide basic token functionality that's easy to integrate with the stack
+Be unopinionated: don't limit database or architecture options, simply provide basic token functionality that's easy to integrate with the stack.
 
 ## Dependencies
 
