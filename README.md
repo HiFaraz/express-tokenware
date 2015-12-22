@@ -7,21 +7,21 @@ var tokenware = require('express-tokenware')('mySecretKey');
 app.use(tokenware.setHeaders);
 
 app.get('/authenticate',
-	someAuthenticationMiddleware,
-	somePayloadCreationMiddleware,
-	tokenware.sign,
-	tokenware.send
+  someAuthenticationMiddleware,
+  somePayloadCreationMiddleware,
+  tokenware.sign,
+  tokenware.send
 );
 
 app.get('/myProtectedPath',
-	tokenware.verify,
-	function (req, res, next) {
-		if (req.decodedBearerToken) {
-			// success. Do something with req.decodedBearerToken here
-		} else {
-			// handle anonymous (invalid token) request
-		}
-	}
+  tokenware.verify,
+  function (req, res, next) {
+    if (req.decodedBearerToken) {
+      // success. Do something with req.decodedBearerToken here
+    } else {
+      // handle anonymous (invalid token) request
+    }
+  }
 );
 
 app.listen(3000);
@@ -91,10 +91,10 @@ This example is a simple implementation of `tokenware.sign` and `tokenware.send`
 
 ```javascript
 app.get('/authenticate',
-	someAuthenticationMiddleware,
-	somePayloadCreationMiddleware,
-	tokenware.sign,
-	tokenware.send
+  someAuthenticationMiddleware,
+  somePayloadCreationMiddleware,
+  tokenware.sign,
+  tokenware.send
 );
 ```
 
@@ -102,11 +102,11 @@ This example adds some complexity by performing an action on the signed bearer t
 
 ```javascript
 app.get('/authenticate',
-	someAuthenticationMiddleware,
-	somePayloadCreationMiddleware,
-	tokenware.sign,
-	someTokenStorageMiddleware,
-	tokenware.send
+  someAuthenticationMiddleware,
+  somePayloadCreationMiddleware,
+  tokenware.sign,
+  someTokenStorageMiddleware,
+  tokenware.send
 );
 ```
 
@@ -124,11 +124,11 @@ This example is a simple implementation of `tokenware.verify` with default confi
 
 ```javascript
 app.get('/myProtectedPath',
-	tokenware.verify,
-	function (req, res, next) {
-		// success. Do something with req.decodedBearerToken here
-	},
-	tokenware.verificationErrorHandler
+  tokenware.verify,
+  function (req, res, next) {
+    // success. Do something with req.decodedBearerToken here
+  },
+  tokenware.verificationErrorHandler
 );
 ```
 
@@ -138,14 +138,14 @@ This example handles anonymous requests (allowed through setting `options.allowA
 
 ```javascript
 app.get('/myProtectedPath',
-	tokenware.verify,
-	function (req, res, next) {
-		if (req.decodedBearerToken) {
-			// success. Do something with req.decodedBearerToken here
-		} else {
-		    // handle anonymous (invalid token) request
-		}
-	}
+  tokenware.verify,
+  function (req, res, next) {
+    if (req.decodedBearerToken) {
+      // success. Do something with req.decodedBearerToken here
+    } else {
+       // handle anonymous (invalid token) request
+    }
+  }
 );
 ```
 
