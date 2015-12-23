@@ -1,6 +1,6 @@
 {
 	"name": "express-tokenware",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"description": "Flexible and minimalist token-based authentication middleware for express",
 	"keywords": [
 		"auth",
