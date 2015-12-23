@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>express-tokenware by HiFaraz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">express-tokenware</h1>
+      <h2 class="project-tagline">Flexible and minimalist token-based authentication middleware for express.</h2>
+      <a href="https://github.com/HiFaraz/express-tokenware" class="btn">View on GitHub</a>
+      <a href="https://github.com/HiFaraz/express-tokenware/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/HiFaraz/express-tokenware/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick start</h1>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> tokenware <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>express-tokenware<span class="pl-pds">'</span></span>)(<span class="pl-s"><span class="pl-pds">'</span>mySecretKey<span class="pl-pds">'</span></span>);
+<span class="pl-smi">app</span>.<span class="pl-en">use</span>(<span class="pl-smi">tokenware</span>.<span class="pl-smi">setHeaders</span>);
+
+<span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/authenticate<span class="pl-pds">'</span></span>,
+  someAuthenticationMiddleware,
+  somePayloadCreationMiddleware,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">sign</span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">send</span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">errorHandler</span>
+);
+
+<span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/myProtectedPath<span class="pl-pds">'</span></span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">verify</span>,
+  <span class="pl-k">function</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>, <span class="pl-smi">next</span>) {
+    <span class="pl-c">// success, do something with req.decodedBearerToken here</span>
+  },
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">errorHandler</span>
+);
+
+<span class="pl-smi">app</span>.<span class="pl-en">listen</span>(<span class="pl-c1">3000</span>);</pre></div>
+
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install express-tokenware</pre></div>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>Uses <a href="https://tools.ietf.org/html/rfc7519">JSON Web Tokens</a> (JWT)</li>
+<li>Flexible data structure - store whatever you like in the token</li>
+<li>Provides tokens on sign-in/authentication</li>
+<li>Extracts bearer tokens from request header</li>
+<li>Checks tokens on incoming requests</li>
+<li>Handles anonymous requests</li>
+<li>Rejects expired tokens</li>
+<li>Detailed built-in error handling</li>
+<li>Allows custom error handling</li>
+<li>Checks revoked tokens</li>
+</ul>
+
+<h1>
+<a id="philosophy" class="anchor" href="#philosophy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Philosophy</h1>
+
+<p>Be unopinionated: don't limit database or architecture options, simply provide basic token functionality that's easy to integrate with the stack.</p>
+
+<h1>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h1>
+
+<p>Where not specified, variables are defined as per <a href="https://github.com/auth0/node-jsonwebtoken">auth0/node-jsonwebtoken</a> documentation.</p>
+
+<h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>Define <code>express-tokenware</code> in your project by calling:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> tokenware <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>express-tokenware<span class="pl-pds">'</span></span>)(secretOrPrivateKey, [options, isRevokedToken]);</pre></div>
+
+<p><code>options</code> refers to configuration parameters that will govern both signing and verification of bearer tokens. It must be an object literal that may include any or all of the following 5 parameters:</p>
+
+<ul>
+<li><code>algorithm</code></li>
+<li><code>expiresIn</code></li>
+<li><code>audience</code></li>
+<li><code>issuer</code></li>
+<li>
+<code>allowAnonymous</code> set this to <code>true</code> to allow anonymous requests (default: false)</li>
+</ul>
+
+<p><code>isRevokedToken</code> is a callback which can accept a token string and return <code>true</code> if the token has been revoked or <code>false</code> if the token has not been revoked.</p>
+
+<p>Attach the <code>tokenware.setHeaders</code> middleware to allow bearer tokens within a request header:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">use</span>(<span class="pl-smi">tokenware</span>.<span class="pl-smi">setHeaders</span>);</pre></div>
+
+<h2>
+<a id="sign-inauthentication" class="anchor" href="#sign-inauthentication" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sign-in/authentication</h2>
+
+<p>Once your application has authenticated a user and created a payload for the bearer token, use the <code>tokenware.sign</code> middleware to sign the token. This will:</p>
+
+<ol>
+<li>look for the payload at <code>req.bearerTokenPayload</code>,</li>
+<li>store a signed bearer token at <code>req.signedBearerToken</code>, and</li>
+<li>call the next middleware function.</li>
+</ol>
+
+<p>Subsequent middleware functions may perform any number of actions on the signed bearer token, such as storing it in a database or sending it to the user, depending on your application design. <code>express-tokenware</code> does not assume any particular database technology  and leaves database interaction up to your application middleware. It provides a convenience middleware function called <code>tokenware.send</code> for sending the signed bearer token to the user at <code>res.signedBearerToken</code>, along with a HTTP header status of <code>200</code>.</p>
+
+<p>This example is a simple implementation of <code>tokenware.sign</code> and <code>tokenware.send</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/authenticate<span class="pl-pds">'</span></span>,
+  someAuthenticationMiddleware,
+  somePayloadCreationMiddleware,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">sign</span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">send</span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">errorHandler</span>
+);</pre></div>
+
+<p>This example adds some complexity by performing an action on the signed bearer token before sending it as a response:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/authenticate<span class="pl-pds">'</span></span>,
+  someAuthenticationMiddleware,
+  somePayloadCreationMiddleware,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">sign</span>,
+  someTokenStorageMiddleware,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">send</span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">errorHandler</span>
+);</pre></div>
+
+<h2>
+<a id="extracting-signed-bearer-tokens-from-incoming-requests" class="anchor" href="#extracting-signed-bearer-tokens-from-incoming-requests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extracting signed bearer tokens from incoming requests</h2>
+
+<p><code>express-tokenware</code> looks for tokens in the <code>authorization</code> header in the form of <code>'Bearer &lt;token&gt;'</code> (case-sensitive).</p>
+
+<h2>
+<a id="verifying-signed-bearer-tokens" class="anchor" href="#verifying-signed-bearer-tokens" aria-hidden="true"><span class="octicon octicon-link"></span></a>Verifying signed bearer tokens</h2>
+
+<p>The recommended way to verify signed bearer tokens is the use the <code>tokenware.verify</code> middleware. Although you may wish to verify against tokens stored in a database, this is not a safe approach as the stored tokens may be tampered by an attacker. Using the middleware provided ensures that the token has a valid signature.</p>
+
+<p>If <code>tokenware.verify</code> successfully verifies the signed bearer token, it will attach the decoded bearer token to <code>req.decodedBearerToken</code> and call the next middleware function. If it fails to verify the token, it will invoke an error which will be passed to the error-handling middleware in the stack.</p>
+
+<p>This example verifies tokens with the default configuration:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/myProtectedPath<span class="pl-pds">'</span></span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">verify</span>,
+  <span class="pl-k">function</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>, <span class="pl-smi">next</span>) {
+    <span class="pl-c">// success, do something with req.decodedBearerToken here</span>
+  },
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">errorHandler</span>
+);</pre></div>
+
+<p>Invalid tokens are treated as errors and are passed to <code>token.errorHandler</code>.</p>
+
+<p>In the case of anonymous requests, <code>tokenware.verify</code> sets <code>req.isAnonymous</code> to <code>true</code>. This example verifies tokens and also detects anonymous requests (allowed through configuration parameters):</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/myProtectedPath<span class="pl-pds">'</span></span>,
+  <span class="pl-smi">tokenware</span>.<span class="pl-smi">verify</span>,
+  <span class="pl-k">function</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>, <span class="pl-smi">next</span>) {
+    <span class="pl-k">if</span> (<span class="pl-smi">req</span>.<span class="pl-smi">isAnonymous</span>) {
+      <span class="pl-c">// anonymous request</span>
+    } <span class="pl-k">else</span> {
+      <span class="pl-c">// not anonymous, do something with req.decodedBearerToken here</span>
+    }
+  }
+);</pre></div>
+
+<p>In the above example, there is no need to call <code>token.errorHandler</code> because invalid tokens are not treated as errors.</p>
+
+<h2>
+<a id="error-handling" class="anchor" href="#error-handling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error handling</h2>
+
+<p><code>express-tokenware</code> provides <code>tokenware.errorHandler</code> as a convenient error-handling middleware, however, it may be replaced with a custom middleware. This section provides information on building a custom error-handling middleware.</p>
+
+<p>The error object passed to the middleware will have at least two properties:</p>
+
+<ul>
+<li><code>name</code></li>
+<li><code>message</code></li>
+</ul>
+
+<p>This table lists the errors sent by <code>express-tokenware</code>:</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Message</th>
+<th>Invoked by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>payloadMissing</td>
+<td>Missing bearer token payload</td>
+<td><code>tokenware.send</code></td>
+</tr>
+<tr>
+<td>signedBearerTokenMissing</td>
+<td>Missing signed bearer token</td>
+<td><code>tokenware.send</code></td>
+</tr>
+<tr>
+<td>JsonWebTokenError</td>
+<td>(variable, generated by <a href="https://github.com/auth0/node-jsonwebtoken">auth0/node-jsonwebtoken</a>)</td>
+<td><code>tokenware.verify</code></td>
+</tr>
+<tr>
+<td>malformedAuthorizationHeader</td>
+<td>Authorization header is malformed, should be in the form of: Bearer </td>
+<td><code>tokenware.verify</code></td>
+</tr>
+<tr>
+<td>noAuthorizationHeader</td>
+<td>Request is missing authorization header</td>
+<td><code>tokenware.verify</code></td>
+</tr>
+<tr>
+<td>revokedToken</td>
+<td>Request authorization was previously revoked</td>
+<td><code>tokenware.verify</code></td>
+</tr>
+<tr>
+<td>TokenExpiredError</td>
+<td>jwt expired (generated by auth0/node-jsonwebtoken)</td>
+<td><code>tokenware.verify</code></td>
+</tr>
+<tr>
+<td>unknown</td>
+<td>Could not verify token, likely that "iat" claim is missing from the token</td>
+<td><code>tokenware.verify</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>If anonymous requests are allowed (through the configuration parameter <code>options.allowAnonymous</code>) then invalid tokens are not treated as an error. In this case, an error-handling middleware may not be necessary.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/HiFaraz/express-tokenware">express-tokenware</a> is maintained by <a href="https://github.com/HiFaraz">HiFaraz</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
