@@ -31,6 +31,12 @@ app.listen(3000);
 $ npm install express-tokenware
 ```
 
+## Testing
+
+```bash
+$ npm test
+```
+
 ## Features
 
 * Uses [JSON Web Tokens](https://tools.ietf.org/html/rfc7519) (JWT)

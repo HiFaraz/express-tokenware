@@ -1,46 +1,52 @@
 {
-	"name": "express-tokenware",
-	"version": "0.2.6",
-	"description": "Flexible and minimalist token-based authentication middleware for express",
-	"keywords": [
-		"auth",
-		"authn",
-		"authentication",
-		"authz",
-		"authorization",
-		"http",
-		"jwt",
-		"token",
-		"oauth",
-		"express"
-	],
-	"main": "./lib",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/HiFaraz/express-tokenware.git"
-	},
-	"bugs": {
-		"url": "https://github.com/HiFaraz/express-tokenware/issues"
-	},
-	"author": {
-		"name": "Faraz Syed",
-		"email": "hello@farazsyed.com"
-	},
-	"license": [
-		{
-			"type": "MIT",
-			"url": "http://www.opensource.org/licenses/MIT"
-		}
-	],
-	"homepage": "https://github.com/HiFaraz/express-tokenware",
-	"dependencies": {
-		"http-codes": "^1.0.0",
-		"jsonwebtoken": "^5.4.1"
-	},
-	"engines": {
-		"npm": ">=1.4.28"
-	}
+  "name": "express-tokenware",
+  "version": "0.2.6",
+  "description": "Flexible and minimalist token-based authentication middleware for express",
+  "keywords": [
+    "auth",
+    "authn",
+    "authentication",
+    "authz",
+    "authorization",
+    "http",
+    "jwt",
+    "token",
+    "oauth",
+    "express"
+  ],
+  "main": "./lib",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HiFaraz/express-tokenware.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HiFaraz/express-tokenware/issues"
+  },
+  "author": {
+    "name": "Faraz Syed",
+    "email": "hello@farazsyed.com"
+  },
+  "license": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+  "homepage": "https://github.com/HiFaraz/express-tokenware",
+  "dependencies": {
+    "http-codes": "^1.0.0",
+    "jsonwebtoken": "^5.4.1"
+  },
+  "engines": {
+    "npm": ">=1.4.28"
+  },
+  "devDependencies": {
+    "express": "^4.13.3",
+    "jasmine": "^2.4.1",
+    "request": "^2.67.0",
+    "request-promise": "^1.0.2"
+  }
 }
