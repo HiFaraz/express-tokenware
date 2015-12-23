@@ -1,6 +1,6 @@
 {
 	"name": "express-tokenware",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "Flexible and minimalist token-based authentication middleware for express",
 	"keywords": [
 		"auth",
@@ -33,10 +33,11 @@
 		{
 			"type": "MIT",
 			"url": "http://www.opensource.org/licenses/MIT"
-    }
+		}
 	],
 	"homepage": "https://github.com/HiFaraz/express-tokenware",
 	"dependencies": {
+		"http-codes": "^1.0.0",
 		"jsonwebtoken": "^5.4.1"
 	},
 	"engines": {
