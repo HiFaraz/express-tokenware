@@ -1,21 +1,26 @@
-describe("express-tokenware", function () {
-	describe("authentication", function () {
+describe('express-tokenware', function () {
+	describe('authentication', function () {
 		var rp = require('request-promise'),
 			express = require('express'),
-			secretKey = 'someSecretKey',
+			httpCodes = require('http-codes'),
+			tokenwareConstructor = require('../lib');
+
+		var secretKey = 'someSecretKey',
 			tokenwareOptions = {
 				expiresIn: 1
 			},
-			expiredTestToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic29tZVVzZXJOYW1lIiwiaWF0IjoxNDUwOTA3Nzk2fQ.E_XpSmwIP2nYJf7ZSUbEAXLqVxirgjVyJHfvpXCEEbM',
 			isRevokenToken = function (token) {
 				return token == expiredTestToken;
-			},
-			tokenwareConstructor = require('../lib');
+			};
 
-		it("should get a token", function () {
+		var expiredTestToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic29tZVVzZXJOYW1lIiwiaWF0IjoxNDUwOTA3Nzk2fQ.E_XpSmwIP2nYJf7ZSUbEAXLqVxirgjVyJHfvpXCEEbM';
+
+		it("should get a token", function (done) {
 			var app = express(),
-				tokenware = tokenwareConstructor(secretKey);
-			app.use(tokenware.setHeaders);
+				tokenware = tokenwareConstructor(secretKey, {
+					debug: true
+				});
+			app.use(tokenware);
 			app.get('/',
 				function (req, res, next) {
 					req.bearerTokenPayload = {
@@ -23,28 +28,32 @@ describe("express-tokenware", function () {
 					};
 					next();
 				},
-				tokenware.sign,
-				tokenware.send,
-				tokenware.errorHandler
+				tokenware,
+				function (req, res, next) {}
 			);
 			var server = app.listen(0),
 				url = 'http://localhost:' + server.address().port;
 			var check = function (statusCode, body) {
-				expect(statusCode).toEqual(200);
+				expect(statusCode).toEqual(httpCodes.OK);
 				server.close();
+				done();
 			};
 			rp({
-					uri: url,
+					url: url,
 					json: true,
 					resolveWithFullResponse: true
 				})
 				.then(function (response) {
+					console.log('token received: ' + response.body.signedBearerToken);
 					check(response.statusCode, response.body.signedBearerToken);
-				}).catch(function (error) {
+				})
+				.catch(function (error) {
 					check(error.statusCode, error.error.error);
 				});
 		});
 	});
+
+	//	describe('authorization', function () {});
 });
 
 /* EXAMPLE CODE - TODO DELETE */
