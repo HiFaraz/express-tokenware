@@ -19,7 +19,7 @@ describe('given a bearer token payload, it', function () {
 		app.use(tokenware);
 		app.get('/',
 			function (req, res, next) {
-				req.bearerTokenPayload = {
+				res.bearerTokenPayload = {
 					user: 'someUserName'
 				};
 				next();
