@@ -4,23 +4,18 @@ Flexible and minimalist token-based authentication middleware for [express](http
 
 ```javascript
 var tokenware = require('express-tokenware')('mySecretKey');
-app.use(tokenware.setHeaders);
+app.use(tokenware);
 
 app.get('/authenticate',
   someAuthenticationMiddleware,
   somePayloadCreationMiddleware,
-  tokenware.sign,
-  tokenware.send,
-  tokenware.errorHandler
+  tokenware
 );
 
 app.get('/myProtectedPath',
-  tokenware.verify,
   function (req, res, next) {
     // success, do something with req.decodedBearerToken here
-  },
-  tokenware.errorHandler
-);
+  });
 
 app.listen(3000);
 ```
@@ -32,6 +27,8 @@ $ npm install express-tokenware
 ```
 
 ## Testing
+
+All `express-tokenware` behaviours have been tested using [jasmine](https://www.npmjs.com/package/jasmine).
 
 ```bash
 $ npm test
@@ -58,62 +55,52 @@ Be unopinionated: don't limit database or architecture options, simply provide b
 Where not specified, variables are defined as per [auth0/node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) documentation.
 
 ### Configuration
-Define `express-tokenware` in your project by calling:
+Include `express-tokenware` in your project by calling:
 
 ```javascript
 var tokenware = require('express-tokenware')(secretOrPrivateKey, [options, isRevokedToken]);
 ```
 
-`options` refers to configuration parameters that will govern both signing and verification of bearer tokens. It must be an object literal that may include any or all of the following 5 parameters:
+`options` refers to configuration parameters that govern both signing and verification of bearer tokens. It must be an object literal that may include any or all of the following 7 parameters:
 
 * `algorithm`
 * `expiresIn`
 * `audience`
 * `issuer`
-* `allowAnonymous` set this to `true` to allow anonymous requests (default: false)
+* `allowAnonymous` set this to `true` to allow anonymous requests (default: `false`)
+* `autoSendToken` set this to `false` to prevent sending a token as soon as it is signed (default: `true`)
+* `handleErrors` set this to `false` to use a custom error-handling middleware (default: `true`)
 
 `isRevokedToken` is a callback which can accept a token string and return `true` if the token has been revoked or `false` if the token has not been revoked.
 
-Attach the `tokenware.setHeaders` middleware to allow bearer tokens within a request header:
+### Initialization
+
+Attach `tokenware` to your application. This will allow bearer tokens to be received and it will verify any bearer tokens found on incoming requests:
 
 ```javascript
-app.use(tokenware.setHeaders);
+var app = express();
+app.use(tokenware);
 ```
 
 ### Sign-in/authentication
-Once your application has authenticated a user and created a payload for the bearer token, use the `tokenware.sign` middleware to sign the token. This will:
+Once your application has authenticated a user and created a payload for the bearer token, use `tokenware` again to sign and send the token. This will:
 
 1. look for the payload at `req.bearerTokenPayload`,
-2. store a signed bearer token at `req.signedBearerToken`, and
+2. store a signed bearer token at `req.signedBearerToken`,
+3. send the signed token to the user at `res.signedBearerToken`, along with an `OK` HTTP header status of `200`, and
 3. call the next middleware function.
 
-
-Subsequent middleware functions may perform any number of actions on the signed bearer token, such as storing it in a database or sending it to the user, depending on your application design. `express-tokenware` does not assume any particular database technology  and leaves database interaction up to your application middleware. It provides a convenience middleware function called `tokenware.send` for sending the signed bearer token to the user at `res.signedBearerToken`, along with a HTTP header status of `200`.
-
-This example is a simple implementation of `tokenware.sign` and `tokenware.send`:
+This example is a simple implementation of sign-in/authentication:
 
 ```javascript
 app.get('/authenticate',
   someAuthenticationMiddleware,
   somePayloadCreationMiddleware,
-  tokenware.sign,
-  tokenware.send,
-  tokenware.errorHandler
+  tokenware
 );
 ```
 
-This example adds some complexity by performing an action on the signed bearer token before sending it as a response:
-
-```javascript
-app.get('/authenticate',
-  someAuthenticationMiddleware,
-  somePayloadCreationMiddleware,
-  tokenware.sign,
-  someTokenStorageMiddleware,
-  tokenware.send,
-  tokenware.errorHandler
-);
-```
+If you would not like to send the token immediately upon signing, set the configuration option `autoSendToken` to `false` and provide your own middleware for responding to the request.
 
 ### Extracting signed bearer tokens from incoming requests
 
@@ -121,28 +108,23 @@ app.get('/authenticate',
 
 ### Verifying signed bearer tokens
 
-The recommended way to verify signed bearer tokens is the use the `tokenware.verify` middleware. Although you may wish to verify against tokens stored in a database, this is not a safe approach as the stored tokens may be tampered by an attacker. Using the middleware provided ensures that the token has a valid signature.
+`express-tokenware` automatically verifies any bearer token found in an incoming request. This guarantees that the token has a valid signature. An alternate approach of verifying against tokens stored in a database is not supported by this module, as the stored tokens may be tampered with by an attacker.
 
-If `tokenware.verify` successfully verifies the signed bearer token, it will attach the decoded bearer token to `req.decodedBearerToken` and call the next middleware function. If it fails to verify the token, it will invoke an error which will be passed to the error-handling middleware in the stack.
+If `tokenware` successfully verifies the signed bearer token, it will attach the decoded bearer token to `req.decodedBearerToken` and call the next middleware function. If it fails to verify the token, it will invoke an error which will be passed to the error-handling middleware in the stack.
 
 This example verifies tokens with the default configuration:
 
 ```javascript
 app.get('/myProtectedPath',
-  tokenware.verify,
   function (req, res, next) {
     // success, do something with req.decodedBearerToken here
-  },
-  tokenware.errorHandler
+  }
 );
 ```
-Invalid tokens are treated as errors and are passed to `token.errorHandler`.
-
-In the case of anonymous requests, `tokenware.verify` sets `req.isAnonymous` to `true`. This example verifies tokens and also detects anonymous requests (allowed through configuration parameters):
+If you would like to allow anonymous requests to your server, set the configuration option `allowAnonymous` to `true`. Subsequent middleware can detect anonymous requests by checking `req.isAnonymous`. This example demonstrates how to differentiate between authorized and anonymous requests:
 
 ```javascript
 app.get('/myProtectedPath',
-  tokenware.verify,
   function (req, res, next) {
     if (req.isAnonymous) {
       // anonymous request
@@ -153,11 +135,9 @@ app.get('/myProtectedPath',
 );
 ```
 
-In the above example, there is no need to call `token.errorHandler` because invalid tokens are not treated as errors.
-
 ## Error handling
 
-`express-tokenware` provides `tokenware.errorHandler` as a convenient error-handling middleware, however, it may be replaced with a custom middleware. This section provides information on building a custom error-handling middleware.
+`express-tokenware` comes with a built-in error-handling, however, it may be replaced with a custom middleware. This section provides information on building a custom error-handling middleware.
 
 The error object passed to the middleware will have at least two properties:
 
@@ -166,15 +146,11 @@ The error object passed to the middleware will have at least two properties:
 
 This table lists the errors sent by `express-tokenware`:
 
-Name|Message|Invoked by
----|---|---
-payloadMissing|Missing bearer token payload|`tokenware.send`
-signedBearerTokenMissing|Missing signed bearer token|`tokenware.send`
-JsonWebTokenError|(variable, generated by [auth0/node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken))|`tokenware.verify`
-malformedAuthorizationHeader|Authorization header is malformed, should be in the form of: Bearer <token>|`tokenware.verify`
-noAuthorizationHeader|Request is missing authorization header|`tokenware.verify`
-revokedToken|Request authorization was previously revoked|`tokenware.verify`
-TokenExpiredError|jwt expired (generated by auth0/node-jsonwebtoken)|`tokenware.verify`
-unknown|Could not verify token, likely that "iat" claim is missing from the token|`tokenware.verify`
+Name|Message
+---|---
+JsonWebTokenError|(variable, generated by [auth0/node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken))
+malformedAuthorizationHeader|Authorization header is malformed, should be in the form of: Bearer <token>
+revokedToken|Request authorization was previously revoked
+TokenExpiredError|jwt expired (generated by [auth0/node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken))
 
-If anonymous requests are allowed (through the configuration parameter `options.allowAnonymous`) then invalid tokens are not treated as an error. In this case, an error-handling middleware may not be necessary.
+If anonymous requests are allowed (through the configuration parameter `allowAnonymous`) then unauthorized requests are not treated as an error. In this case, an error-handling middleware may not be necessary.
