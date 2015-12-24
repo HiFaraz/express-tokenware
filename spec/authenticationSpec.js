@@ -2,7 +2,7 @@ var rp = require('request-promise'),
 	express = require('express'),
 	httpCodes = require('http-codes'),
 	jsonwebtoken = require('jsonwebtoken'),
-	tokenwareConstructor = require('../lib');
+	tokenware = require('../lib');
 
 var secretKey = 'someSecretKey';
 
@@ -14,17 +14,14 @@ var getURL = function (server) {
 
 describe('given a bearer token payload, it', function () {
 	it("should respond with an OK code and a properly coded token", function (done) {
-		var app = express(),
-			tokenware = tokenwareConstructor(secretKey);
-		app.use(tokenware);
+		var app = tokenware(secretKey)(express);
 		app.get('/',
 			function (req, res, next) {
 				res.bearerTokenPayload = {
 					user: 'someUserName'
 				};
 				next();
-			},
-			tokenware
+			}
 		);
 
 		var server = app.listen(0);

@@ -4,15 +4,14 @@ Flexible and minimalist token-based authentication middleware for [express](http
 
 ```javascript
 var tokenware = require('express-tokenware')('mySecretKey');
-var app = express(), routes = express();
-app.use(tokenware, routes, tokenware);
+var app = tokenware(express);
 
-routes.get('/authenticate',
+app.get('/authenticate',
   someAuthenticationMiddleware,
   somePayloadCreationMiddleware
 );
 
-routes.get('/myProtectedPath',
+app.get('/myProtectedPath',
   function (req, res, next) {
     // success, do something with req.decodedBearerToken here
   });
@@ -77,20 +76,18 @@ var tokenware = require('express-tokenware')(secretOrPrivateKey, [options, isRev
 Attach `tokenware` to your application. This will allow bearer tokens to be received, verify any bearer tokens found on incoming requests, and send signed tokens on responses with token payloads.
 
 ```javascript
-var app = express(), routes = express();
-app.use(tokenware, routes, tokenware);
-app.listen(port);
+var app = tokenware(express);
 ```
 
-Use `routes` for all application routes and middleware rather than `app`. This pattern ensures that `tokenware` is both the first and last middleware to execute, which allows it to be used for both authenticating users and authorizing requests.
+`express` is injected as a dependency into `tokenware`. This ensures that `tokenware` is both the first and last middleware to execute, which allows it to be used for both authenticating users and authorizing requests.
 
 ### Sign-in/authentication
-Once your application has authenticated a user and created a payload for the bearer token, create a payload at `res.bearerTokenPayload` and call `next()` in your last route middleware. `tokenware` will send the signed token to the user as a JSON object `{"signedBearerToken": <token>}`, along with an `OK` HTTP header status of `200`.
+Once your application has authenticated a user and created a payload for the bearer token, create a payload **object** at `res.bearerTokenPayload` and call `next()` in your last route middleware. `tokenware` will send the signed token to the user as a JSON object `{"signedBearerToken": <token>}`, along with an `OK` HTTP header status of `200`.
 
 This example is a simple implementation of sign-in/authentication:
 
 ```javascript
-routes.get('/authenticate',
+app.get('/authenticate',
   someAuthenticationMiddleware,
   somePayloadCreationMiddleware // this **must** call `next()` to send a signed token
 );
@@ -109,7 +106,7 @@ If `tokenware` successfully verifies the signed bearer token, it will attach the
 This example verifies tokens with the default configuration:
 
 ```javascript
-routes.get('/myProtectedPath',
+app.get('/myProtectedPath',
   function (req, res, next) {
     // success, do something with req.decodedBearerToken here
   }
@@ -118,7 +115,7 @@ routes.get('/myProtectedPath',
 If you would like to allow anonymous requests to your server, set the configuration option `allowAnonymous` to `true`. Subsequent middleware can detect anonymous requests by checking `req.isAnonymous`. This example demonstrates how to differentiate between authorized and anonymous requests:
 
 ```javascript
-routes.get('/myProtectedPath',
+app.get('/myProtectedPath',
   function (req, res, next) {
     if (req.isAnonymous) {
       // anonymous request

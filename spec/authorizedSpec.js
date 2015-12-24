@@ -2,7 +2,7 @@ var rp = require('request-promise'),
 	express = require('express'),
 	httpCodes = require('http-codes'),
 	jsonwebtoken = require('jsonwebtoken'),
-	tokenwareConstructor = require('../lib');
+	tokenware = require('../lib');
 
 var secretKey = 'someSecretKey';
 
@@ -15,9 +15,7 @@ var getURL = function (server) {
 describe('given a proper authorization header, and', function () {
 	describe('given a valid token, it', function () {
 		it('should respond with an OK code and decode the token properly', function (done) {
-			var app = express(),
-				tokenware = tokenwareConstructor(secretKey);
-			app.use(tokenware);
+			var app = tokenware(secretKey)(express);
 			app.get('/', function (req, res, next) {
 				res.send(req.decodedBearerToken);
 			});

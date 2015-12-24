@@ -2,7 +2,7 @@ var rp = require('request-promise'),
 	express = require('express'),
 	httpCodes = require('http-codes'),
 	jsonwebtoken = require('jsonwebtoken'),
-	tokenwareConstructor = require('../lib');
+	tokenware = require('../lib');
 
 var secretKey = 'someSecretKey';
 
@@ -19,11 +19,9 @@ var customErrorHandlingMiddleware = function (err, req, res, next) {
 describe('given a custom error handler, and', function () {
 	describe('given a malformed authorization header, it', function () {
 		it('should respond with a specific error message', function (done) {
-			var app = express(),
-				tokenware = tokenwareConstructor(secretKey, {
-					handleErrors: false
-				});
-			app.use(tokenware);
+			var app = tokenware(secretKey, {
+				handleErrors: false
+			})(express);
 			app.use(customErrorHandlingMiddleware);
 
 			var server = app.listen(0);
@@ -52,11 +50,9 @@ describe('given a custom error handler, and', function () {
 	describe('given a proper authorization header, and', function () {
 		describe('given an invalid token, it', function () {
 			it('should respond with a specific error name', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						handleErrors: false
-					});
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					handleErrors: false
+				})(express);
 				app.use(customErrorHandlingMiddleware);
 
 				var server = app.listen(0);
@@ -84,12 +80,10 @@ describe('given a custom error handler, and', function () {
 
 		describe('given an expired token, it', function () {
 			it('should respond with a specific error name', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						expiresIn: '1 second',
-						handleErrors: false
-					});
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					expiresIn: '1 second',
+					handleErrors: false
+				})(express);
 				app.use(customErrorHandlingMiddleware);
 
 				var server = app.listen(0);
@@ -116,16 +110,14 @@ describe('given a custom error handler, and', function () {
 		});
 
 		describe('given an revoked token, it', function () {
-			var isRevokenToken = function (token) {
+			var isRevokedToken = function (token) {
 				return token == expiredTestToken;
 			};
 
 			it('should respond with a specific error message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						handleErrors: false
-					}, isRevokenToken);
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					handleErrors: false
+				}, isRevokedToken)(express);
 				app.use(customErrorHandlingMiddleware);
 
 				var server = app.listen(0);

@@ -2,7 +2,7 @@ var rp = require('request-promise'),
 	express = require('express'),
 	httpCodes = require('http-codes'),
 	jsonwebtoken = require('jsonwebtoken'),
-	tokenwareConstructor = require('../lib');
+	tokenware = require('../lib');
 
 var secretKey = 'someSecretKey';
 
@@ -20,11 +20,9 @@ var anonymousRequestMiddleware = function (req, res, next) {
 describe('given that anonymous requests are allowed, and', function () {
 	describe('given no authorization header, it', function () {
 		it('should respond with an OK code and send a specific message', function (done) {
-			var app = express(),
-				tokenware = tokenwareConstructor(secretKey, {
-					allowAnonymous: true
-				});
-			app.use(tokenware);
+			var app = tokenware(secretKey, {
+				allowAnonymous: true
+			})(express);
 			app.get('/', anonymousRequestMiddleware);
 
 			var server = app.listen(0);
@@ -50,11 +48,9 @@ describe('given that anonymous requests are allowed, and', function () {
 
 	describe('given a malformed authorization header, it', function () {
 		it('should respond with an OK code and send a specific message', function (done) {
-			var app = express(),
-				tokenware = tokenwareConstructor(secretKey, {
-					allowAnonymous: true
-				});
-			app.use(tokenware);
+			var app = tokenware(secretKey, {
+				allowAnonymous: true
+			})(express);
 			app.get('/', anonymousRequestMiddleware);
 
 			var server = app.listen(0);
@@ -84,11 +80,9 @@ describe('given that anonymous requests are allowed, and', function () {
 	describe('given a proper authorization header, and', function () {
 		describe('given an invalid token, it', function () {
 			it('should respond with an OK code and send a specific message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						allowAnonymous: true
-					});
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					allowAnonymous: true
+				})(express);
 				app.get('/', anonymousRequestMiddleware);
 
 				var server = app.listen(0);
@@ -117,12 +111,10 @@ describe('given that anonymous requests are allowed, and', function () {
 
 		describe('given an expired token, it', function () {
 			it('should respond with an OK code and send a specific message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						expiresIn: '1 second',
-						allowAnonymous: true
-					});
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					expiresIn: '1 second',
+					allowAnonymous: true
+				})(express);
 				app.get('/', anonymousRequestMiddleware);
 
 				var server = app.listen(0);
@@ -150,16 +142,14 @@ describe('given that anonymous requests are allowed, and', function () {
 		});
 
 		describe('given an revoked token, it', function () {
-			var isRevokenToken = function (token) {
+			var isRevokedToken = function (token) {
 				return token == expiredTestToken;
 			};
 
 			it('should respond with an OK code and send a specific message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						allowAnonymous: true
-					}, isRevokenToken);
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					allowAnonymous: true
+				}, isRevokedToken)(express);
 				app.get('/', anonymousRequestMiddleware);
 
 				var server = app.listen(0);

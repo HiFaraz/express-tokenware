@@ -2,7 +2,7 @@ var rp = require('request-promise'),
 	express = require('express'),
 	httpCodes = require('http-codes'),
 	jsonwebtoken = require('jsonwebtoken'),
-	tokenwareConstructor = require('../lib');
+	tokenware = require('../lib');
 
 var secretKey = 'someSecretKey';
 
@@ -15,9 +15,7 @@ var getURL = function (server) {
 describe('given the internal error handler, and', function () {
 	describe('given a malformed authorization header, it', function () {
 		it('should respond with a BAD REQUEST code and a specific error message', function (done) {
-			var app = express(),
-				tokenware = tokenwareConstructor(secretKey);
-			app.use(tokenware);
+			var app = tokenware(secretKey)(express);
 
 			var server = app.listen(0);
 			var check = function (statusCode, message) {
@@ -46,9 +44,7 @@ describe('given the internal error handler, and', function () {
 	describe('given a proper authorization header, and', function () {
 		describe('given an invalid token, it', function () {
 			it('should respond with an UNAUTHORIZED code and a specific error message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey);
-				app.use(tokenware);
+				var app = tokenware(secretKey)(express);
 
 				var server = app.listen(0);
 				var check = function (statusCode, message) {
@@ -76,11 +72,9 @@ describe('given the internal error handler, and', function () {
 
 		describe('given an expired token, it', function () {
 			it('should respond with an UNAUTHORIZED code and a specific error message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, {
-						expiresIn: '1 second'
-					});
-				app.use(tokenware);
+				var app = tokenware(secretKey, {
+					expiresIn: '1 second'
+				})(express);
 
 				var server = app.listen(0);
 				var check = function (statusCode, message) {
@@ -107,14 +101,12 @@ describe('given the internal error handler, and', function () {
 		});
 
 		describe('given an revoked token, it', function () {
-			var isRevokenToken = function (token) {
+			var isRevokedToked = function (token) {
 				return token == expiredTestToken;
 			};
 
 			it('should respond with an UNAUTHORIZED code and a specific error message', function (done) {
-				var app = express(),
-					tokenware = tokenwareConstructor(secretKey, isRevokenToken);
-				app.use(tokenware);
+				var app = tokenware(secretKey, isRevokedToked)(express);
 
 				var server = app.listen(0);
 				var check = function (statusCode, message) {
