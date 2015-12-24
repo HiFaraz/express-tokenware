@@ -1,48 +1,49 @@
 describe("express-tokenware", function () {
-	var request = require('request'),
-		rp = require('request-promise'),
-		express = require('express'),
-		secretKey = 'someSecretKey',
-		tokenwareOptions = {
-			expiresIn: 1
-		},
-		expiredTestToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic29tZVVzZXJOYW1lIiwiaWF0IjoxNDUwOTA3Nzk2fQ.E_XpSmwIP2nYJf7ZSUbEAXLqVxirgjVyJHfvpXCEEbM',
-		isRevokenToken = function (token) {
-			return token == expiredTestToken;
-		},
-		tokenwareConstructor = require('../lib');
-
-	it("should get a token", function () {
-		var app = express(),
-			tokenware = tokenwareConstructor(secretKey);
-		app.use(tokenware.setHeaders);
-		app.get('/',
-			function (req, res, next) {
-				req.bearerTokenPayload = {
-					user: 'someUserName' // the payload can be anything
-				};
-				next();
+	describe("authentication", function () {
+		var rp = require('request-promise'),
+			express = require('express'),
+			secretKey = 'someSecretKey',
+			tokenwareOptions = {
+				expiresIn: 1
 			},
-			tokenware.sign,
-			tokenware.send,
-			tokenware.errorHandler
-		);
-		var server = app.listen(0),
-			url = 'http://localhost:' + server.address().port;
-		var check = function (statusCode, body) {
-			expect(statusCode).toEqual(200);
-			server.close();
-		};
-		rp({
-				uri: url,
-				json: true,
-				resolveWithFullResponse: true
-			})
-			.then(function (response) {
-				check(response.statusCode, response.body.signedBearerToken);
-			}).catch(function (error) {
-				check(error.statusCode, error.error.error);
-			});
+			expiredTestToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoic29tZVVzZXJOYW1lIiwiaWF0IjoxNDUwOTA3Nzk2fQ.E_XpSmwIP2nYJf7ZSUbEAXLqVxirgjVyJHfvpXCEEbM',
+			isRevokenToken = function (token) {
+				return token == expiredTestToken;
+			},
+			tokenwareConstructor = require('../lib');
+
+		it("should get a token", function () {
+			var app = express(),
+				tokenware = tokenwareConstructor(secretKey);
+			app.use(tokenware.setHeaders);
+			app.get('/',
+				function (req, res, next) {
+					req.bearerTokenPayload = {
+						user: 'someUserName' // the payload can be anything
+					};
+					next();
+				},
+				tokenware.sign,
+				tokenware.send,
+				tokenware.errorHandler
+			);
+			var server = app.listen(0),
+				url = 'http://localhost:' + server.address().port;
+			var check = function (statusCode, body) {
+				expect(statusCode).toEqual(200);
+				server.close();
+			};
+			rp({
+					uri: url,
+					json: true,
+					resolveWithFullResponse: true
+				})
+				.then(function (response) {
+					check(response.statusCode, response.body.signedBearerToken);
+				}).catch(function (error) {
+					check(error.statusCode, error.error.error);
+				});
+		});
 	});
 });
 
