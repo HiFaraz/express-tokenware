@@ -9,8 +9,7 @@ app.use(tokenware, routes, tokenware);
 
 routes.get('/authenticate',
   someAuthenticationMiddleware,
-  somePayloadCreationMiddleware,
-  tokenware
+  somePayloadCreationMiddleware
 );
 
 routes.get('/myProtectedPath',
