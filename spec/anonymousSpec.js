@@ -18,6 +18,36 @@ var anonymousRequestMiddleware = function (req, res, next) {
 };
 
 describe('given that anonymous requests are allowed, and', function () {
+	describe('given no authorization header, it', function () {
+		it('should respond with an OK code and send a specific message', function (done) {
+			var app = express(),
+				tokenware = tokenwareConstructor(secretKey, {
+					allowAnonymous: true
+				});
+			app.use(tokenware);
+			app.get('/', anonymousRequestMiddleware);
+
+			var server = app.listen(0);
+			var check = function (statusCode, message) {
+				expect(statusCode).toEqual(httpCodes.OK);
+				expect(message).toEqual('anonymous request accepted');
+				server.close();
+				done();
+			};
+			rp({
+					url: getURL(server),
+					resolveWithFullResponse: true,
+					json: true
+				})
+				.then(function (response) {
+					check(response.statusCode, response.body);
+				})
+				.catch(function (error) {
+					check(error.statusCode, error.error.error);
+				});
+		});
+	});
+
 	describe('given a malformed authorization header, it', function () {
 		it('should respond with an OK code and send a specific message', function (done) {
 			var app = express(),
