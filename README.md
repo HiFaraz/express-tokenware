@@ -1,6 +1,8 @@
 # express-tokenware
 
-Flexible and minimalist token-based authentication middleware for [express](http://expressjs.com/).
+Simple token-based authentication middleware for [express](http://expressjs.com/).
+
+**NOTE: this is a pre-production version, and the module interfaces and functionality are not stable yet.**
 
 ```javascript
 var tokenware = require('express-tokenware')('mySecretKey');
