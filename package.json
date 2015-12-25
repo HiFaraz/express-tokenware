@@ -37,6 +37,8 @@
   ],
   "homepage": "https://github.com/HiFaraz/express-tokenware",
   "dependencies": {
+    "debug-stack": "^0.1.0",
+    "defaults": "^1.0.3",
     "http-codes": "^1.0.0",
     "jsonwebtoken": "^5.4.1"
   },
