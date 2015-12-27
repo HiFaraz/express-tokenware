@@ -1,8 +1,8 @@
 {
-  "name": "express-tokenware",
-  "version": "0.4.1",
-  "description": "Flexible and minimalist token-based authentication middleware for express",
-  "keywords": [
+	"name": "express-tokenware",
+	"version": "0.4.2",
+	"description": "Simple token-based authentication middleware for express",
+	"keywords": [
     "auth",
     "authn",
     "authentication",
@@ -12,43 +12,44 @@
     "jwt",
     "token",
     "oauth",
-    "express"
+    "express",
+	"jsonwebtoken"
   ],
-  "main": "./lib",
-  "scripts": {
-    "test": "jasmine"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/HiFaraz/express-tokenware.git"
-  },
-  "bugs": {
-    "url": "https://github.com/HiFaraz/express-tokenware/issues"
-  },
-  "author": {
-    "name": "Faraz Syed",
-    "email": "hello@farazsyed.com"
-  },
-  "license": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
+	"main": "./lib",
+	"scripts": {
+		"test": "jasmine"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/HiFaraz/express-tokenware.git"
+	},
+	"bugs": {
+		"url": "https://github.com/HiFaraz/express-tokenware/issues"
+	},
+	"author": {
+		"name": "Faraz Syed",
+		"email": "hello@farazsyed.com"
+	},
+	"license": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/MIT"
     }
   ],
-  "homepage": "https://github.com/HiFaraz/express-tokenware",
-  "dependencies": {
-    "debug-stack": "^0.1.0",
-    "defaults": "^1.0.3",
-    "http-codes": "^1.0.0",
-    "jsonwebtoken": "^5.4.1"
-  },
-  "engines": {
-    "npm": ">=1.4.28"
-  },
-  "devDependencies": {
-    "colors": "^1.1.2",
-    "express": "^4.13.3",
-    "jasmine": "^2.4.1",
-    "request-promise": "^1.0.2"
-  }
+	"homepage": "https://github.com/HiFaraz/express-tokenware",
+	"dependencies": {
+		"debug-stack": "^0.1.0",
+		"defaults": "^1.0.3",
+		"http-codes": "^1.0.0",
+		"jsonwebtoken": "^5.4.1"
+	},
+	"engines": {
+		"npm": ">=1.4.28"
+	},
+	"devDependencies": {
+		"colors": "^1.1.2",
+		"express": "^4.13.3",
+		"jasmine": "^2.4.1",
+		"request-promise": "^1.0.2"
+	}
 }

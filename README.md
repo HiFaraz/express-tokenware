@@ -87,7 +87,7 @@ var app = tokenware(express);
 `express` is injected as a dependency into `tokenware`. This ensures that `tokenware` is both the first and last middleware to execute, which allows it to be used for both authenticating users and authorizing requests.
 
 ### 5.3 Sign-in/authentication
-Once your application has authenticated a user and created a payload for the bearer token, create a payload **object** at `res.bearerTokenPayload` and call `next()` in your last route middleware. `tokenware` will send the signed token to the user as a JSON object `{"signedBearerToken": <token>}`, along with an `OK` HTTP header status of `200`.
+Once your application has authenticated a user and created a payload for the bearer token, create a payload **object** at `res.locals.bearerTokenPayload` and call `next()` in your last route middleware. `tokenware` will send the signed token to the user as a JSON object `{"signedBearerToken": <token>}`, along with an `OK` HTTP header status of `200`.
 
 This example is a simple implementation of sign-in/authentication:
 
@@ -100,7 +100,7 @@ app.get('/authenticate',
 
 ### 5.4 Extracting signed bearer tokens from incoming requests
 
-`express-tokenware` looks for tokens in the `authorization` header in the form of `'Bearer <token>'` (case-sensitive).
+`express-tokenware` looks for tokens in the `authorization` header in the form of `'Bearer <token>'` (case-sensitive). Set the response headers appropriately to allow cross-origin resource sharing (CORS).
 
 ### 5.5 Verifying signed bearer tokens
 
