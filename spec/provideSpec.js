@@ -17,7 +17,7 @@ describe('given a bearer token payload, it', function () {
 		var app = tokenware(secretKey)(express);
 		app.get('/',
 			function (req, res, next) {
-				res.bearerTokenPayload = {
+				res.locals.bearerTokenPayload = {
 					user: 'someUserName'
 				};
 				next();

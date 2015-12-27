@@ -1,8 +1,8 @@
-var rp = require('request-promise'),
-	express = require('express'),
-	httpCodes = require('http-codes'),
-	jsonwebtoken = require('jsonwebtoken'),
-	tokenware = require('../lib');
+var rp = require('request-promise');
+var express = require('express')
+var httpCodes = require('http-codes');
+var jsonwebtoken = require('jsonwebtoken');
+var tokenware = require('../lib');
 
 var secretKey = 'someSecretKey';
 
