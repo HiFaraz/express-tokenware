@@ -1,6 +1,6 @@
 # express-tokenware
 
-Simple token-based authentication middleware for [express](http://expressjs.com/).
+Sign and verify tokens for your [express](http://expressjs.com/) app with one middleware.
 
 **NOTE: this is a pre-production version, and the module interfaces and functionality are not stable yet.**
 
