@@ -30,12 +30,7 @@
 		"name": "Faraz Syed",
 		"email": "hello@farazsyed.com"
 	},
-	"license": [
-		{
-			"type": "MIT",
-			"url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
+	"license": "MIT",
 	"homepage": "https://github.com/HiFaraz/express-tokenware",
 	"dependencies": {
 		"debug-stack": "^0.1.0",
