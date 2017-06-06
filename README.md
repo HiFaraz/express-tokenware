@@ -1,10 +1,8 @@
 # express-tokenware
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/express-tokenware.svg)](https://greenkeeper.io/)
-
 Sign and verify tokens for your [express](http://expressjs.com/) app with one middleware.
 
-[![Linux Build][travis-image]][travis-url]
+[![Greenkeeper badge](https://badges.greenkeeper.io/HiFaraz/express-tokenware.svg)](https://greenkeeper.io/) [![Linux Build][travis-image]][travis-url]
 
 **NOTE: this is a pre-production version, and the module interfaces and functionality are not stable yet.**
 
