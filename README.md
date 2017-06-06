@@ -2,6 +2,8 @@
 
 Sign and verify tokens for your [express](http://expressjs.com/) app with one middleware.
 
+[![Linux Build][travis-image]][travis-url]
+
 **NOTE: this is a pre-production version, and the module interfaces and functionality are not stable yet.**
 
 ```javascript
@@ -154,3 +156,10 @@ If anonymous requests are allowed (through the configuration parameter `allowAno
 ## 7. Issues and pull requests
 
 Feedback and contribution are highly encouraged! Please report feedback through the [Github issue tracker](https://github.com/HiFaraz/express-tokenware/issues). To submit code, please fork the [Github repository](https://github.com/HiFaraz/express-tokenware) and send a pull request.
+
+## 8. Licence
+
+[MIT](LICENSE)
+
+[travis-image]: https://travis-ci.org/HiFaraz/express-tokenware.svg?branch=master
+[travis-url]: https://travis-ci.org/HiFaraz/express-tokenware
