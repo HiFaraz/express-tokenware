@@ -45,7 +45,7 @@
   "devDependencies": {
     "colors": "^1.1.2",
     "express": "^4.13.3",
-    "jasmine": "^2.4.1",
+    "jasmine": "2.6.0",
     "request-promise": "^4.2.1"
   }
 }
