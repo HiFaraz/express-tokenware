@@ -37,7 +37,7 @@
     "defaults": "^1.0.3",
     "http-codes": "^1.0.0",
     "jsonwebtoken": "^7.4.1",
-    "request": "^2.81.0"
+    "request": "^2.83.0"
   },
   "engines": {
     "npm": ">=1.4.28"
